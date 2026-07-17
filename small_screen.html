@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Touch Controller</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body {
+            background-color: #000000;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container split into 4 equal quadrants */
+        #controller-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Each zone is completely black with no borders, feedback, or text */
+        .zone {
+            background-color: #000000;
+            position: relative;
+            outline: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="controller-grid">
+        <div class="zone" data-zone="1"></div>
+        <div class="zone" data-zone="2"></div>
+        <div class="zone" data-zone="3"></div>
+        <div class="zone" data-zone="4"></div>
+    </div>
+
+    <script src="small_screen.js"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dual Screen Controller</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #c5c6c7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00e5ff, #d500f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 10px rgba(0, 229, 255, 0.1);
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #8b949e;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex-grow: 1;
+        }
+
+        /* Launcher Dashboard Grid */
+        .launcher-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .launcher-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 229, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .card h2 {
+            color: #ffffff;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #8b949e;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00e5ff 0%, #00b0ff 100%);
+            color: #0b0c10;
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #d500f9 0%, #aa00ff 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(213, 0, 249, 0.2);
+        }
+
+        .btn-secondary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(213, 0, 249, 0.3);
+        }
+
+        .shortcut-tip {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* Simulator Container */
+        .simulator-section {
+            background: rgba(22, 27, 34, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .simulator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .simulator-header h2 {
+            color: #ffffff;
+            font-size: 1.3rem;
+        }
+
+        .simulator-badge {
+            background: rgba(0, 229, 255, 0.1);
+            color: #00e5ff;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .simulator-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 550px;
+        }
+
+        @media (max-width: 992px) {
+            .simulator-panels {
+                grid-template-columns: 1fr;
+                height: 1000px;
+            }
+        }
+
+        .panel-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            height: 100%;
+        }
+
+        .panel-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #8b949e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .iframe-container {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            flex-grow: 1;
+            background: #000;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 30px 0 10px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Interactive Dual-Screen Player</h1>
+        <p>Control a high-performance big screen display with a touch-based small screen interface</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Launcher Controls -->
+        <div class="launcher-grid">
+            <div class="card">
+                <h2>📱 1. Small Screen Controller</h2>
+                <p>
+                    Open this interface on your touchscreen controller device. The screen will remain blank black initially. 
+                    Tapping or dragging over the four invisible quadrants triggers high-speed playback command signals.
+                </p>
+                <a href="small_screen.html" target="_blank" class="btn btn-primary" id="launch-small">
+                    Open Controller Tab
+                </a>
+                <span class="shortcut-tip">Drag to a separate secondary monitor, then press F11 to go full screen</span>
+            </div>
+
+            <div class="card">
+                <h2>🖥️ 2. Big Screen Display</h2>
+                <p>
+                    Open this interface on the main display screen. It loops a standby logo/home video, transitioning 
+                    instantly to zone videos upon touch and fading back to home after 5 seconds of inactivity.
+                </p>
+                <a href="big_screen.html" target="_blank" class="btn btn-secondary" id="launch-big">
+                    Open Display Tab
+                </a>
+                <span class="shortcut-tip">Unmute audio after opening. Press F11 for immersive kiosk presentation</span>
+            </div>
+        </div>
+
+        <!-- Integrated Simulator -->
+        <div class="simulator-section">
+            <div class="simulator-header">
+                <h2>Side-by-Side Sandbox Simulator</h2>
+                <span class="simulator-badge">Local Testing Environment</span>
+            </div>
+            <p style="font-size: 0.9rem; color: #8b949e; line-height: 1.4;">
+                Below is a mock simulator. Click inside the <strong>Display</strong> panel on the right first to unlock audio. 
+                The <strong>Controller</strong> screen is completely blank black, but you can click/tap in its four quadrants 
+                (Top-Left for P1, Top-Right for P2, Bottom-Left for P3, Bottom-Right for P4) to trigger the respective videos.
+            </p>
+            <div class="simulator-panels">
+                <!-- Small Screen Iframe -->
+                <div class="panel-wrapper">
+                    <div class="panel-title">
+                        <span>📱 CONTROLLER (4-Zone Input)</span>
+                        <span style="font-size: 0.8rem; color: #8b949e;">Click/Hold & Drag</span>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe src="small_screen.html"></iframe>
+                    </div>
+                </div>
+
+                <!-- Big Screen Iframe -->
+                <div class="panel-wrapper">
+                    <div class="panel-title">
+                        <span>🖥️ DISPLAY (Video Output)</span>
+                        <span style="font-size: 0.8rem; color: #8b949e;">Click to activate audio first</span>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe src="big_screen.html?simulator=true"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Dual-Screen Interactive System &bull; Powered by BroadcastChannel API
+    </footer>
+</body>
+</html>
